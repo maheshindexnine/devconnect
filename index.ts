@@ -5,6 +5,7 @@ import { expressMiddleware } from '@apollo/server/express4';
 import cors from 'cors';
 import { typeDefs, resolvers } from './schema';
 import { connectDB } from './config/db';
+import { authMiddleware } from './middlewares/auth';
 
 const startServer = async () => {
   await connectDB();
@@ -21,7 +22,9 @@ const startServer = async () => {
     "/graphql",
     cors(),
     express.json(),
-    expressMiddleware(server)
+    expressMiddleware(server, {
+      context: authMiddleware as any,
+    })
   );
 
   const PORT = process.env.PORT || 4000;

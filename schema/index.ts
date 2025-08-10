@@ -2,6 +2,7 @@ import { gql } from 'graphql-tag';
 import fs from 'fs';
 import path from 'path';
 import { userResolvers } from './resolvers/user.resolver';
+import { authResolvers } from './resolvers/auth.resolver';
 
 // Load typeDefs from .graphql file
 const userTypeDefs = gql(
@@ -9,4 +10,4 @@ const userTypeDefs = gql(
 );
 
 export const typeDefs = [userTypeDefs];
-export const resolvers = [userResolvers];
+export const resolvers = [userResolvers, authResolvers];

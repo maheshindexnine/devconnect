@@ -16,34 +16,47 @@ export const userResolvers = {
         sortOrder = "desc",
         page = 1,
         limit = 10,
-      }: any
+      }: any,
+      context: any
     ) => {
-      const query: any = {};
-
-      // Filtering
-      if (filter?.gender) query.gender = filter.gender;
-      if (filter?.role) query.role = filter.role;
-      if (filter?.minAge || filter?.maxAge) {
-        query.age = {};
-        if (filter.minAge) query.age.$gte = filter.minAge;
-        if (filter.maxAge) query.age.$lte = filter.maxAge;
+      // Check if user exists in context (set by authMiddleware)
+      if (!context.user) {
+        throw new Error("Authentication required");
       }
 
-      // Search by full name (firstName + lastName)
-      if (search) {
-        query.$or = [
-          { firstName: { $regex: search, $options: "i" } },
-          { lastName: { $regex: search, $options: "i" } },
-          {
-            $expr: {
-              $regexMatch: {
-                input: { $concat: ["$firstName", " ", "$lastName"] },
-                regex: search,
-                options: "i",
+      const { role, id } = context.user;
+
+      const query: any = {};
+
+      if (role !== "Admin") {
+        // If not admin, return only this user's record
+        query._id = id;
+      } else {
+        // Filtering
+        if (filter?.gender) query.gender = filter.gender;
+        if (filter?.role) query.role = filter.role;
+        if (filter?.minAge || filter?.maxAge) {
+          query.age = {};
+          if (filter.minAge) query.age.$gte = filter.minAge;
+          if (filter.maxAge) query.age.$lte = filter.maxAge;
+        }
+
+        // Search by full name (firstName + lastName)
+        if (search) {
+          query.$or = [
+            { firstName: { $regex: search, $options: "i" } },
+            { lastName: { $regex: search, $options: "i" } },
+            {
+              $expr: {
+                $regexMatch: {
+                  input: { $concat: ["$firstName", " ", "$lastName"] },
+                  regex: search,
+                  options: "i",
+                },
               },
             },
-          },
-        ];
+          ];
+        }
       }
 
       // Sorting

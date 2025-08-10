@@ -36,6 +36,28 @@ type UserPagination {
   totalCount: Int!
 }
 
+type AuthPayload {
+  accessToken: String!
+  refreshToken: String!
+  user: User!
+}
+
+input RegisterInput {
+  firstName: String!
+  lastName: String!
+  email: String!
+  password: String!
+  age: Int!
+  phone: String!
+  gender: String!
+  role: String
+}
+
+input LoginInput {
+  email: String!
+  password: String!
+}
+
 type Query {
   user(id: ID!): User
   users(
@@ -72,4 +94,7 @@ type Mutation {
   createUser(input: CreateUserInput!): User!
   updateUser(id: ID!, input: UpdateUserInput!): User!
   deleteUser(id: ID!): Boolean!
+  register(input: RegisterInput!): AuthPayload!
+  login(input: LoginInput!): AuthPayload!
+  refreshToken(token: String!): AuthPayload!
 }

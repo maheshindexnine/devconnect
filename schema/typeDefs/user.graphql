@@ -1,0 +1,75 @@
+type User {
+  id: ID!
+  firstName: String!
+  lastName: String!
+  fullName: String!
+  email: String!
+  age: Int!
+  phone: String!
+  gender: String!
+  role: String!
+  createdAt: String!
+  updatedAt: String!
+}
+
+input UserFilter {
+  gender: String
+  role: String
+  minAge: Int
+  maxAge: Int
+}
+
+enum UserSortField {
+  firstName
+  lastName
+  createdAt
+  age
+}
+
+enum SortOrder {
+  asc
+  desc
+}
+
+type UserPagination {
+  users: [User!]!
+  totalCount: Int!
+}
+
+type Query {
+  user(id: ID!): User
+  users(
+    filter: UserFilter
+    search: String
+    sortField: UserSortField
+    sortOrder: SortOrder
+    page: Int
+    limit: Int
+  ): UserPagination!
+}
+
+input CreateUserInput {
+  firstName: String!
+  lastName: String!
+  email: String!
+  age: Int!
+  phone: String!
+  gender: String!
+  role: String
+}
+
+input UpdateUserInput {
+  firstName: String
+  lastName: String
+  email: String
+  age: Int
+  phone: String
+  gender: String
+  role: String
+}
+
+type Mutation {
+  createUser(input: CreateUserInput!): User!
+  updateUser(id: ID!, input: UpdateUserInput!): User!
+  deleteUser(id: ID!): Boolean!
+}

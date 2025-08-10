@@ -5,8 +5,8 @@ export const authMiddleware = ({ req }: any) => {
   if (authHeader) {
     const token = authHeader.split(' ')[1];
     try {
-      const user = verifyAccessToken(token);
-      return { user };
+      const user = verifyAccessToken(token); // Decoded payload
+      return { user }; // Available in context.user
     } catch {
       throw new Error('Invalid or expired token');
     }
